@@ -6675,8 +6675,16 @@ RELEASE_RVCTCYGWIN_ARM_CC_FLAGS  = "$(CCPATH_FLAG)" $(ARCHCC_FLAGS) $(PLATFORM_F
 *_ARMGCC_*_ASL_FLAGS         = DEF(IASL_FLAGS)
 *_ARMGCC_*_ASL_OUTFLAGS      = DEF(IASL_OUTFLAGS)
 *_ARMGCC_*_ASLPP_FLAGS       = -x c -E -P
-*_ARMGCC_*_ASLCC_FLAGS       = -x c
-*_ARMGCC_*_ASLDLINK_FLAGS    = DEF(GCC_DLINK_FLAGS_COMMON) --entry ReferenceAcpiTable
+
+#
+#  In order to generate correct sections for the .aslc based ACPI tables on ARM, we need to tweak
+#  the GCC cross compiler/linker flags slightly to emit relocation information. These flags
+#  were copied from the git UEFI.Next project here:
+#
+#  https://git.linaro.org/arm/uefi/uefi-next.git/commit/305529517b4fc71fda9902d6937922362df3c78a
+#
+*_ARMGCC_*_ASLCC_FLAGS       = -x c -Dmain=ReferenceAcpiTable
+*_ARMGCC_*_ASLDLINK_FLAGS    = -nostdlib --entry _ReferenceAcpiTable --emit-relocs
 
 ##################
 # ARM definitions
